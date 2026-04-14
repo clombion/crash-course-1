@@ -1,48 +1,54 @@
-// Initialize the map and set its view to a global scale
-const map = L.map('map').setView([20, 0], 2);
+// Initialize the map and set its view to Bordeaux, France
+const map = L.map('map').setView([44.8378, -0.5792], 13);
 
-// Add standard OpenStreetMap tiles to the map
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+// Add OpenStreetMap tiles to the map
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
-// Use a marker cluster group for better performance with 5,000+ points
-// Since we don't have the cluster plugin by default, we'll use CircleMarkers for performance
-// and add a popup for each event.
+// Data for Bordeaux Hospitals
+const hospitals = [
+    { 
+        name: "CHU Pellegrin", 
+        lat: 44.8310, 
+        lng: -0.6060,
+        image: "https://placehold.co/200x120/007bff/white?text=CHU+Pellegrin"
+    },
+    { 
+        name: "Hôpital Saint-André", 
+        lat: 44.8360, 
+        lng: -0.5810,
+        image: "https://placehold.co/200x120/28a745/white?text=H%C3%B4pital+Saint-Andr%C3%A9"
+    },
+    { 
+        name: "Hôpital des Enfants", 
+        lat: 44.8300, 
+        lng: -0.6070,
+        image: "https://placehold.co/200x120/dc3545/white?text=H%C3%B4pital+des+Enfants"
+    },
+    { 
+        name: "Polyclinique Bordeaux Nord Aquitaine", 
+        lat: 44.8700, 
+        lng: -0.5750,
+        image: "https://placehold.co/200x120/ffc107/black?text=Polyclinique+Nord"
+    },
+    { 
+        name: "Clinique Mutualiste de Pessac", 
+        lat: 44.8100, 
+        lng: -0.6350,
+        image: "https://placehold.co/200x120/17a2b8/white?text=Clinique+Mutualiste"
+    }
+];
 
-fetch('floods.json')
-    .then(response => response.json())
-    .then(data => {
-        L.geoJSON(data, {
-            pointToLayer: function (feature, latlng) {
-                // Style based on severity
-                let color = "#3388ff"; // Default Blue
-                if (feature.properties.severity == 2) color = "#ff9900"; // Orange
-                if (feature.properties.severity == 3) color = "#ff0000"; // Red
-                
-                return L.circleMarker(latlng, {
-                    radius: 4,
-                    fillColor: color,
-                    color: "#000",
-                    weight: 1,
-                    opacity: 1,
-                    fillOpacity: 0.8
-                });
-            },
-            onEachFeature: function (feature, layer) {
-                const props = feature.properties;
-                layer.bindPopup(`
-                    <div style="font-family: sans-serif;">
-                        <h3 style="margin: 0 0 5px 0;">Flood in ${props.country}</h3>
-                        <p style="margin: 2px 0;"><strong>Date:</strong> ${props.began}</p>
-                        <p style="margin: 2px 0;"><strong>Cause:</strong> ${props.cause}</p>
-                        <p style="margin: 2px 0;"><strong>Severity:</strong> ${props.severity}</p>
-                        <p style="margin: 2px 0;"><strong>Displaced:</strong> ${props.displaced || 'N/A'}</p>
-                        <p style="margin: 2px 0;"><strong>Deaths:</strong> ${props.dead || '0'}</p>
-                    </div>
-                `);
-            }
-        }).addTo(map);
-    })
-    .catch(error => console.error('Error loading the flood data:', error));
+// Add markers for each hospital
+hospitals.forEach(hospital => {
+    L.marker([hospital.lat, hospital.lng])
+        .addTo(map)
+        .bindPopup(`
+            <div style="text-align: center;">
+                <img src="${hospital.image}" alt="${hospital.name}" style="width: 100%; height: auto; border-radius: 4px; margin-bottom: 8px;">
+                <br><b>${hospital.name}</b>
+            </div>
+        `);
+});
