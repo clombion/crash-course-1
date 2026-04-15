@@ -1,0 +1,151 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -17.3805661,
+          14.7612746
+        ]
+      },
+      "properties": {
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "Dispensaire confessionnel Notre Dame d'Esperance",
+        "distance_to_flood_km": 0.957
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -17.3800141,
+          14.7620145
+        ]
+      },
+      "properties": {
+        "amenity": "doctors",
+        "healthcare": "doctor",
+        "name": "Poste de Sant\u00e9 Sant Yalla",
+        "distance_to_flood_km": 0.969
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -17.3724613,
+          14.7646281
+        ]
+      },
+      "properties": {
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Pharmacie Tally Diallo",
+        "distance_to_flood_km": 0.991
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -17.3822738,
+          14.7567246
+        ]
+      },
+      "properties": {
+        "amenity": "doctors",
+        "emergency": "yes",
+        "healthcare": "doctor",
+        "name": "Centre de Sant\u00e9",
+        "distance_to_flood_km": 0.928
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -17.3772648,
+          14.7560436
+        ]
+      },
+      "properties": {
+        "amenity": "doctors",
+        "building": "yes",
+        "healthcare": "doctor",
+        "distance_to_flood_km": 0.384
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -17.3761243,
+          14.7542902
+        ]
+      },
+      "properties": {
+        "amenity": "hospital",
+        "emergency": "yes",
+        "healthcare": "hospital",
+        "name": "Hopital de Thiaroye",
+        "distance_to_flood_km": 0.31
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -17.372844,
+          14.7612505
+        ]
+      },
+      "properties": {
+        "amenity": "doctors",
+        "healthcare": "doctor",
+        "name": "Poste de sant\u00e9 de thiaroye gare",
+        "distance_to_flood_km": 0.613
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -17.3685798,
+          14.756185
+        ]
+      },
+      "properties": {
+        "amenity": "doctors",
+        "healthcare": "doctor",
+        "name": "Poste de sant\u00e9 de la rochette",
+        "distance_to_flood_km": 0.552
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -17.3703306,
+          14.7552055
+        ]
+      },
+      "properties": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Pharmacie LES PARAS",
+        "distance_to_flood_km": 0.368
+      }
+    }
+  ]
+}
