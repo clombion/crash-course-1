@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Path to the CSV file (one level up from the dashboard folder)
-    const csvUrl = '../floodarchive_cleaned.csv';
+    const csvUrl = '../../data/floodarchive_cleaned.csv';
 
     Papa.parse(csvUrl, {
         download: true,

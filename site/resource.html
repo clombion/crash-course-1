@@ -3,8 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Foundations — Crash Course</title>
+  <title>Resource — Crash Course</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    .md-content { max-width: 740px; }
+    .md-content h1 { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin: 32px 0 16px; color: var(--navy); }
+    .md-content h2 { font-family: var(--font-condensed); font-size: 20px; font-weight: 600; margin: 28px 0 12px; color: var(--navy); padding-bottom: 6px; border-bottom: 2px solid var(--blue); display: inline-block; }
+    .md-content h3 { font-family: var(--font-condensed); font-size: 17px; font-weight: 600; margin: 24px 0 8px; color: var(--navy); }
+    .md-content p { margin: 12px 0; line-height: 1.8; color: var(--gray-700); }
+    .md-content ul, .md-content ol { margin: 12px 0; padding-left: 24px; color: var(--gray-700); }
+    .md-content li { margin: 6px 0; line-height: 1.7; }
+    .md-content strong { color: var(--navy); }
+    .md-content code { font-family: var(--font-display); font-size: 0.9em; background: var(--gray-100); padding: 2px 6px; border-radius: 3px; }
+    .md-content pre { background: var(--navy); color: var(--blue-light); padding: 20px 24px; border-radius: 8px; overflow-x: auto; margin: 16px 0; }
+    .md-content pre code { background: none; padding: 0; color: inherit; }
+    .md-content table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .md-content th { background: var(--navy); color: var(--white); padding: 10px 16px; text-align: left; font-family: var(--font-condensed); font-weight: 600; }
+    .md-content td { padding: 10px 16px; border-bottom: 1px solid var(--gray-200); }
+    .md-content tr:nth-child(even) { background: var(--gray-50); }
+    .md-content hr { border: none; border-top: 1px solid var(--gray-200); margin: 32px 0; }
+    .md-content a { color: var(--blue); }
+    .md-content blockquote { border-left: 3px solid var(--blue); padding: 12px 20px; margin: 16px 0; background: var(--blue-pale); border-radius: 0 8px 8px 0; }
+    .md-content blockquote p { color: var(--gray-600); margin: 0; }
+    .loading { text-align: center; padding: 60px; color: var(--gray-400); font-family: var(--font-display); font-size: 14px; }
+  </style>
 </head>
 <body>
 
@@ -18,7 +41,7 @@
 <aside class="sidebar">
   <div class="sidebar-section">
     <div class="sidebar-section-title">Self-Paced Review</div>
-    <a href="foundations.html" class="sidebar-link active"><span class="icon">◆</span> Foundations</a>
+    <a href="foundations.html" class="sidebar-link"><span class="icon">◆</span> Foundations</a>
     <a href="section-a.html" class="sidebar-link"><span class="icon">A</span> Reading an RFP</a>
     <a href="section-b.html" class="sidebar-link"><span class="icon">B</span> Example to Proposal</a>
     <a href="section-c.html" class="sidebar-link"><span class="icon">C</span> Finding &amp; Getting Data</a>
@@ -49,34 +72,44 @@
 
 <main class="main">
   <div class="section-page">
-    <div class="section-label">Part 0</div>
-    <h1>Foundations</h1>
-    <p class="section-intro">The data pipeline, prompt framework, and core principles that underpin all the work in this course.</p>
-
-    <div style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 12px; padding: 48px; text-align: center; margin: 40px 0;">
-      <p style="color: var(--gray-400); font-family: var(--font-display); font-size: 14px;">Handout slides for this section are being prepared.</p>
-      <p style="color: var(--gray-400); font-size: 13px; margin-top: 8px;">Check back soon.</p>
+    <div class="md-content" id="content">
+      <div class="loading">Loading document...</div>
     </div>
 
     <nav class="page-nav">
       <a href="../index.html">
         <span>←</span>
         <div>
-          <div class="nav-label">Previous</div>
+          <div class="nav-label">Back to</div>
           <div class="nav-title">Home</div>
         </div>
       </a>
-      <a href="section-a.html">
-        <div style="text-align:right;">
-          <div class="nav-label">Next</div>
-          <div class="nav-title">Section A: Reading an RFP</div>
-        </div>
-        <span>→</span>
-      </a>
+      <div></div>
     </nav>
   </div>
 </main>
 
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const doc = params.get('doc');
+  if (doc) {
+    const mdUrl = `../resources/${doc}.md`;
+    fetch(mdUrl)
+      .then(r => {
+        if (!r.ok) throw new Error('Document not found');
+        return r.text();
+      })
+      .then(md => {
+        document.getElementById('content').innerHTML = marked.parse(md);
+        // Set page title from first h1
+        const h1 = document.querySelector('.md-content h1');
+        if (h1) document.title = h1.textContent + ' — Crash Course';
+      })
+      .catch(err => {
+        document.getElementById('content').innerHTML = `<p style="color: var(--red);">Could not load document: ${doc}.md</p>`;
+      });
+  }
+</script>
 <script src="js/site.js"></script>
 </body>
 </html>
