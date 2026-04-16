@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoData Visualizer</title>
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #252542;
+      --bg-tertiary: #2d2d4a;
+      --text-primary: #f0f0f0;
+      --text-secondary: #a0a0b0;
+      --text-muted: #6a6a7a;
+      --accent: #e6b84a;
+      --accent-hover: #d4a83a;
+      --border: #3a3a5a;
+      --severity-low: #4ade80;
+      --severity-medium: #facc15;
+      --severity-high: #f87171;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Header */
+    header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    header h1 svg {
+      color: var(--accent);
+    }
+
+    /* Main content */
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Upload view */
+    .upload-view {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .upload-container {
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 3rem 2rem;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+      background: var(--bg-secondary);
+    }
+
+    .drop-zone:hover,
+    .drop-zone.drag-over {
+      border-color: var(--accent);
+      background: var(--bg-tertiary);
+    }
+
+    .drop-zone-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 1rem;
+      color: var(--text-muted);
+    }
+
+    .drop-zone h2 {
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .drop-zone p {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .drop-zone input {
+      display: none;
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Buttons */
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .btn:hover {
+      background: var(--bg-secondary);
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-primary);
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Paste modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 1000;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0.25rem;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      flex: 1;
+      overflow: auto;
+    }
+
+    .modal-body textarea {
+      width: 100%;
+      height: 200px;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-family: monospace;
+      font-size: 0.8rem;
+      resize: vertical;
+    }
+
+    .modal-body textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .modal-body p {
+      margin-bottom: 0.75rem;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* Data view */
+    .data-view {
+      flex: 1;
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 320px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow: hidden;
+    }
+
+    .card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-header h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 1rem;
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Search and filter */
+    .search-input {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .filter-select {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    /* Records list */
+    .records-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .records-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem;
+    }
+
+    .record-item {
+      padding: 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .record-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .record-item.selected {
+      background: var(--bg-tertiary);
+      border-color: var(--accent);
+    }
+
+    .record-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.25rem;
+    }
+
+    .record-country {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .record-badge {
+      font-size: 0.65rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+
+    .badge-low {
+      background: rgba(74, 222, 128, 0.2);
+      color: var(--severity-low);
+    }
+
+    .badge-medium {
+      background: rgba(250, 204, 21, 0.2);
+      color: var(--severity-medium);
+    }
+
+    .badge-high {
+      background: rgba(248, 113, 113, 0.2);
+      color: var(--severity-high);
+    }
+
+    .record-cause {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .record-stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+    }
+
+    /* Map container */
+    .map-container {
+      flex: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Leaflet popup styling */
+    .leaflet-popup-content-wrapper {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border-radius: 8px;
+    }
+
+    .leaflet-popup-tip {
+      background: var(--bg-secondary);
+    }
+
+    .popup-content h4 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .popup-content p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .popup-content .badge {
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+
+    /* Hidden class */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .data-view {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        max-height: 40vh;
+      }
+
+      .map-container {
+        min-height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+          <path d="M2 12h20"/>
+        </svg>
+        GeoData Visualizer
+      </h1>
+    </header>
+
+    <main>
+      <!-- Upload View -->
+      <div id="uploadView" class="upload-view">
+        <div class="upload-container">
+          <div class="drop-zone" id="dropZone">
+            <svg class="drop-zone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <h2>Drop your CSV file here</h2>
+            <p>or click to browse files</p>
+            <input type="file" id="fileInput" accept=".csv,.tsv,.txt">
+          </div>
+
+          <div class="divider">or</div>
+
+          <div class="btn-group">
+            <button class="btn" id="pasteBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+              </svg>
+              Paste CSV Data
+            </button>
+            <button class="btn btn-primary" id="exampleBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              Load Example Dataset
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data View -->
+      <div id="dataView" class="data-view hidden">
+        <div class="sidebar">
+          <!-- Stats Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 id="fileName">Dataset</h3>
+              <button class="btn" id="clearBtn" style="padding: 0.375rem 0.75rem; min-width: auto; flex: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                </svg>
+                Clear
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="stats-grid">
+                <div class="stat">
+                  <div class="stat-value" id="statRecords">0</div>
+                  <div class="stat-label">Records</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-value" id="statCountries">0</div>
+                  <div class="stat-label">Countries</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-value" id="statDeaths">0</div>
+                  <div class="stat-label">Deaths</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter Card -->
+          <div class="card">
+            <div class="card-body">
+              <input type="text" class="search-input" id="searchInput" placeholder="Search records...">
+              <select class="filter-select" id="causeFilter">
+                <option value="">All Causes</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Records Card -->
+          <div class="card records-card">
+            <div class="card-header">
+              <h3>Records <span id="recordCount"></span></h3>
+            </div>
+            <div class="records-list" id="recordsList"></div>
+          </div>
+        </div>
+
+        <!-- Map -->
+        <div class="map-container">
+          <div id="map"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Paste Modal -->
+    <div id="pasteModal" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Paste CSV Data</h3>
+          <button class="modal-close" id="modalClose">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Paste your CSV data below. Include headers in the first row.</p>
+          <textarea id="pasteTextarea" placeholder="ID,Country,lat,long,Cause,Severity&#10;1,Mozambique,-25.96,32.58,Heavy Rain,1.5&#10;2,Namibia,-22.56,17.08,Flood,2"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" id="modalCancel">Cancel</button>
+          <button class="btn btn-primary" id="modalParse">Parse Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- PapaParse -->
+  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    // Example dataset
+    const EXAMPLE_DATA = [
+      { ID: 2178, Country: "Mozambique", lat: -25.96, long: 32.58, MainCause: "Heavy rain", Severity: 1, Dead: 8, Displaced: 8300 },
+      { ID: 5015, Country: "Mozambique", lat: -23.87, long: 35.38, MainCause: "Tropical Storm Eloise", Severity: 1.5, Dead: 6, Displaced: 0 },
+      { ID: 4023, Country: "Mozambique", lat: -17.88, long: 36.89, MainCause: "Heavy Rain", Severity: 1.5, Dead: 135, Displaced: 170000 },
+      { ID: 2430, Country: "Namibia", lat: -22.56, long: 17.08, MainCause: "Heavy rain", Severity: 2, Dead: 10, Displaced: 40000 },
+      { ID: 3156, Country: "Zimbabwe", lat: -19.02, long: 29.15, MainCause: "Cyclone Idai", Severity: 2.5, Dead: 344, Displaced: 270000 },
+      { ID: 3890, Country: "Malawi", lat: -13.97, long: 33.79, MainCause: "Tropical Storm Ana", Severity: 2, Dead: 46, Displaced: 190000 },
+      { ID: 4521, Country: "Madagascar", lat: -18.87, long: 47.51, MainCause: "Cyclone Batsirai", Severity: 2.5, Dead: 121, Displaced: 143000 },
+      { ID: 2789, Country: "South Africa", lat: -29.86, long: 31.02, MainCause: "Flash Floods", Severity: 2, Dead: 448, Displaced: 40000 },
+      { ID: 3345, Country: "Kenya", lat: -1.29, long: 36.82, MainCause: "Seasonal Floods", Severity: 1.5, Dead: 29, Displaced: 100000 },
+      { ID: 4102, Country: "Tanzania", lat: -6.17, long: 35.74, MainCause: "Heavy Rain", Severity: 1, Dead: 12, Displaced: 25000 },
+      { ID: 2901, Country: "Nigeria", lat: 9.08, long: 7.40, MainCause: "River Overflow", Severity: 2, Dead: 603, Displaced: 1300000 },
+      { ID: 3678, Country: "Sudan", lat: 15.50, long: 32.56, MainCause: "Nile Flooding", Severity: 2, Dead: 138, Displaced: 500000 }
+    ];
+
+    // State
+    let data = [];
+    let filteredData = [];
+    let selectedRow = null;
+    let map = null;
+    let markers = [];
+    let currentFileName = '';
+
+    // DOM Elements
+    const uploadView = document.getElementById('uploadView');
+    const dataView = document.getElementById('dataView');
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const pasteBtn = document.getElementById('pasteBtn');
+    const exampleBtn = document.getElementById('exampleBtn');
+    const pasteModal = document.getElementById('pasteModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalParse = document.getElementById('modalParse');
+    const pasteTextarea = document.getElementById('pasteTextarea');
+    const clearBtn = document.getElementById('clearBtn');
+    const searchInput = document.getElementById('searchInput');
+    const causeFilter = document.getElementById('causeFilter');
+    const recordsList = document.getElementById('recordsList');
+
+    // Coordinate column detection
+    const LAT_COLUMNS = ['lat', 'latitude', 'anonymous_lat', 'y', 'lat_y'];
+    const LONG_COLUMNS = ['long', 'lng', 'longitude', 'anonymous_long', 'x', 'lon', 'long_x'];
+
+    function findCoordinateColumns(row) {
+      const keys = Object.keys(row).map(k => k.toLowerCase());
+      let latCol = null, longCol = null;
+
+      for (const key of Object.keys(row)) {
+        const lowerKey = key.toLowerCase();
+        if (!latCol && LAT_COLUMNS.some(c => lowerKey.includes(c))) latCol = key;
+        if (!longCol && LONG_COLUMNS.some(c => lowerKey.includes(c))) longCol = key;
+      }
+
+      return { latCol, longCol };
+    }
+
+    function parseNumber(val) {
+      if (typeof val === 'number') return val;
+      if (typeof val === 'string') return parseFloat(val.replace(/,/g, ''));
+      return 0;
+    }
+
+    // Parse and process data
+    function processData(rawData, fileName) {
+      if (!rawData || rawData.length === 0) {
+        alert('No data found in file');
+        return;
+      }
+
+      const { latCol, longCol } = findCoordinateColumns(rawData[0]);
+      
+      if (!latCol || !longCol) {
+        alert('Could not find latitude/longitude columns. Please ensure your data has columns like "lat", "latitude", "long", "longitude", etc.');
+        return;
+      }
+
+      data = rawData.map((row, idx) => ({
+        ...row,
+        _id: idx,
+        _lat: parseFloat(row[latCol]),
+        _long: parseFloat(row[longCol]),
+        _severity: parseNumber(row.Severity || row.severity || 1),
+        _dead: parseNumber(row.Dead || row.dead || row.deaths || 0),
+        _displaced: parseNumber(row.Displaced || row.displaced || 0),
+        _country: row.Country || row.country || 'Unknown',
+        _cause: row.MainCause || row.mainCause || row.Cause || row.cause || row.categorised_cause || 'Unknown'
+      })).filter(row => !isNaN(row._lat) && !isNaN(row._long));
+
+      if (data.length === 0) {
+        alert('No valid coordinate data found');
+        return;
+      }
+
+      currentFileName = fileName;
+      filteredData = [...data];
+      showDataView();
+    }
+
+    // Show data view
+    function showDataView() {
+      uploadView.classList.add('hidden');
+      dataView.classList.remove('hidden');
+      
+      document.getElementById('fileName').textContent = currentFileName;
+      updateStats();
+      populateCauseFilter();
+      renderRecords();
+      initMap();
+    }
+
+    // Update stats
+    function updateStats() {
+      const countries = new Set(data.map(d => d._country));
+      const deaths = data.reduce((sum, d) => sum + d._dead, 0);
+      
+      document.getElementById('statRecords').textContent = data.length;
+      document.getElementById('statCountries').textContent = countries.size;
+      document.getElementById('statDeaths').textContent = deaths.toLocaleString();
+    }
+
+    // Populate cause filter
+    function populateCauseFilter() {
+      const causes = [...new Set(data.map(d => d._cause))].sort();
+      causeFilter.innerHTML = '<option value="">All Causes</option>';
+      causes.forEach(cause => {
+        const option = document.createElement('option');
+        option.value = cause;
+        option.textContent = cause;
+        causeFilter.appendChild(option);
+      });
+    }
+
+    // Get severity class
+    function getSeverityClass(severity) {
+      if (severity <= 1) return 'badge-low';
+      if (severity <= 2) return 'badge-medium';
+      return 'badge-high';
+    }
+
+    // Get severity color
+    function getSeverityColor(severity) {
+      if (severity <= 1) return '#4ade80';
+      if (severity <= 2) return '#facc15';
+      return '#f87171';
+    }
+
+    // Render records list
+    function renderRecords() {
+      const search = searchInput.value.toLowerCase();
+      const cause = causeFilter.value;
+
+      filteredData = data.filter(row => {
+        const matchSearch = !search || 
+          row._country.toLowerCase().includes(search) ||
+          row._cause.toLowerCase().includes(search);
+        const matchCause = !cause || row._cause === cause;
+        return matchSearch && matchCause;
+      });
+
+      document.getElementById('recordCount').textContent = `(${filteredData.length})`;
+
+      if (filteredData.length === 0) {
+        recordsList.innerHTML = '<div class="no-results">No records found</div>';
+        updateMarkers();
+        return;
+      }
+
+      recordsList.innerHTML = filteredData.map(row => `
+        <div class="record-item ${selectedRow === row._id ? 'selected' : ''}" data-id="${row._id}">
+          <div class="record-header">
+            <span class="record-country">${row._country}</span>
+            <span class="record-badge ${getSeverityClass(row._severity)}">
+              Severity ${row._severity}
+            </span>
+          </div>
+          <div class="record-cause">${row._cause}</div>
+          <div class="record-stats">
+            <span>Deaths: ${row._dead.toLocaleString()}</span>
+            <span>Displaced: ${row._displaced.toLocaleString()}</span>
+          </div>
+        </div>
+      `).join('');
+
+      // Add click handlers
+      recordsList.querySelectorAll('.record-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const id = parseInt(item.dataset.id);
+          selectRecord(id);
+        });
+      });
+
+      updateMarkers();
+    }
+
+    // Select record
+    function selectRecord(id) {
+      selectedRow = selectedRow === id ? null : id;
+      renderRecords();
+      
+      if (selectedRow !== null) {
+        const row = data.find(d => d._id === selectedRow);
+        if (row && map) {
+          map.setView([row._lat, row._long], 8);
+        }
+      }
+    }
+
+    // Initialize map
+    function initMap() {
+      if (map) {
+        map.remove();
+      }
+
+      // Small delay to ensure container has dimensions
+      setTimeout(() => {
+        map = L.map('map', { zoomControl: true }).setView([0, 20], 3);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
+        }).addTo(map);
+
+        // Force Leaflet to recalculate container size
+        map.invalidateSize();
+
+        updateMarkers();
+        fitMapBounds();
+      }, 100);
+    }
+
+    // Update markers
+    function updateMarkers() {
+      markers.forEach(m => m.remove());
+      markers = [];
+
+      filteredData.forEach(row => {
+        const color = getSeverityColor(row._severity);
+        const isSelected = row._id === selectedRow;
+
+        const marker = L.circleMarker([row._lat, row._long], {
+          radius: isSelected ? 12 : 8,
+          fillColor: color,
+          color: isSelected ? '#ffffff' : color,
+          weight: isSelected ? 3 : 2,
+          opacity: 1,
+          fillOpacity: 0.7
+        }).addTo(map);
+
+        marker.bindPopup(`
+          <div class="popup-content">
+            <h4>${row._country}</h4>
+            <p><strong>Cause:</strong> ${row._cause}</p>
+            <p><strong>Deaths:</strong> ${row._dead.toLocaleString()}</p>
+            <p><strong>Displaced:</strong> ${row._displaced.toLocaleString()}</p>
+            <span class="badge record-badge ${getSeverityClass(row._severity)}">Severity ${row._severity}</span>
+          </div>
+        `);
+
+        marker.on('click', () => selectRecord(row._id));
+        markers.push(marker);
+      });
+    }
+
+    // Fit map bounds
+    function fitMapBounds() {
+      if (filteredData.length === 0) return;
+
+      const bounds = L.latLngBounds(filteredData.map(d => [d._lat, d._long]));
+      map.fitBounds(bounds, { padding: [50, 50] });
+    }
+
+    // Clear data
+    function clearData() {
+      data = [];
+      filteredData = [];
+      selectedRow = null;
+      currentFileName = '';
+      searchInput.value = '';
+      causeFilter.value = '';
+      
+      if (map) {
+        map.remove();
+        map = null;
+      }
+      markers = [];
+
+      dataView.classList.add('hidden');
+      uploadView.classList.remove('hidden');
+    }
+
+    // Event listeners
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) handleFile(file);
+    });
+
+    function handleFile(file) {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          processData(results.data, file.name);
+        },
+        error: (err) => {
+          alert('Error parsing file: ' + err.message);
+        }
+      });
+    }
+
+    // Paste modal
+    pasteBtn.addEventListener('click', () => {
+      pasteModal.classList.remove('hidden');
+      pasteTextarea.focus();
+    });
+
+    modalClose.addEventListener('click', () => {
+      pasteModal.classList.add('hidden');
+      pasteTextarea.value = '';
+    });
+
+    modalCancel.addEventListener('click', () => {
+      pasteModal.classList.add('hidden');
+      pasteTextarea.value = '';
+    });
+
+    modalParse.addEventListener('click', () => {
+      const text = pasteTextarea.value.trim();
+      if (!text) {
+        alert('Please paste some data');
+        return;
+      }
+
+      Papa.parse(text, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          pasteModal.classList.add('hidden');
+          pasteTextarea.value = '';
+          processData(results.data, 'Pasted Data');
+        },
+        error: (err) => {
+          alert('Error parsing data: ' + err.message);
+        }
+      });
+    });
+
+    // Example data
+    exampleBtn.addEventListener('click', () => {
+      data = EXAMPLE_DATA.map((row, idx) => ({
+        ...row,
+        _id: idx,
+        _lat: row.lat,
+        _long: row.long,
+        _severity: row.Severity,
+        _dead: row.Dead,
+        _displaced: row.Displaced,
+        _country: row.Country,
+        _cause: row.MainCause
+      }));
+      
+      currentFileName = 'Example: African Flood Events';
+      filteredData = [...data];
+      showDataView();
+    });
+
+    // Clear button
+    clearBtn.addEventListener('click', clearData);
+
+    // Search and filter
+    searchInput.addEventListener('input', renderRecords);
+    causeFilter.addEventListener('change', renderRecords);
+
+    // Close modal on outside click
+    pasteModal.addEventListener('click', (e) => {
+      if (e.target === pasteModal) {
+        pasteModal.classList.add('hidden');
+        pasteTextarea.value = '';
+      }
+    });
+  </script>
+</body>
+</html>
