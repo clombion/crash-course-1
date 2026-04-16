@@ -688,7 +688,7 @@
 
 ---
 
-## Seven steps, two groups
+## The data pipeline has seven steps in two groups
 
 The data pipeline structures all data work from beginning to end.
 
@@ -718,7 +718,7 @@ The data pipeline structures all data work from beginning to end.
 **Present** cuts across both groups. It is about communication: maps, charts, reports, dashboards. The output format depends on the audience and the story.
 
 Note:
-The pipeline comes from the School of Data, developed at the Open Knowledge Foundation. It applies at every scale: a quick Wikipedia check, a national data collection, or anything in between. Present is not just "make a chart" — it is the translation of data work into something a stakeholder can use.
+The pipeline comes from the School of Data, developed at the Open Knowledge Foundation. It applies at every scale: a quick Wikipedia check, a national data collection, or anything in between. Present is not just "make a chart": it is the translation of data work into something a stakeholder can use.
 
 ---
 
@@ -775,14 +775,14 @@ From Lecture 1: the harness metaphor. The pipeline prevents the "happy path" pro
 
 </div>
 
-Get and Clean are mechanical, repetitive, and text-based — exactly what AI is good at. Define, Verify, and Analyse require judgment about meaning — exactly what AI is bad at.
+Get and Clean are mechanical, repetitive, and text-based: exactly what AI is good at. Define, Verify, and Analyse require judgment about meaning: exactly what AI is bad at.
 
 Note:
 From Lecture 2: the AI involvement heatmap. This pattern held throughout the crash course. AI wrote scraping scripts and cleaning formulas. Humans decided what data to collect, whether results made sense, and what the data meant for the proposal.
 
 ---
 
-## The automation spectrum
+## More automation means less visibility
 
 | Level | Method | Example |
 |---|---|---|
@@ -804,7 +804,7 @@ From Lecture 2: the verification burden. Students experienced this: when AI buil
 
 ---
 
-## The prompt framework
+## Structure your prompts with five elements
 
 When a task has multiple steps, the prompt needs structure. Five elements:
 
@@ -814,7 +814,7 @@ When a task has multiple steps, the prompt needs structure. Five elements:
 4. **Output shape** — what should the result look like?
 5. **Human verification** — how will you check the result?
 
-A prompt without these elements is an invitation for the AI to fill in the blanks — with hallucinations.
+A prompt without these elements is an invitation for the AI to fill in the blanks, with hallucinations.
 
 The more complex the task, the more important it is to think through all five. When prompts fail, come back to this framework to diagnose what is missing.
 
@@ -862,7 +862,7 @@ Never ask the AI to directly modify the content of your data. Ask it to write a 
 </div>
 </div>
 
-Exception: AI writing a formula inside a spreadsheet cell IS trustable — you see the result immediately in the cell and can verify it in place.
+Exception: AI writing a formula inside a spreadsheet cell IS trustable because you see the result immediately in the cell and can verify it in place.
 
 Note:
 From Day 3 and Day 4 of the crash course. The principle: AI can modify data shape (filter rows, create columns, convert formats) via scripts. It should not modify data content (edit values, fill in blanks, correct typos) by itself.
@@ -887,13 +887,13 @@ Verification is **direct and immediate**.
 
 AI writes code that ranks, compares, or classifies data. The goal is **decisions about the world**.
 
-How do you know the ranking logic is correct — unless you can read the code and understand every choice it made?
+How do you know the ranking logic is correct, unless you can read the code and understand every choice it made?
 
 </div>
 </div>
 
 Note:
-From Lecture 2. The key distinction: AI-generated code that builds software is testable — it either works or it doesn't. AI-generated code that processes data to inform decisions brings back all the data trust problems.
+From Lecture 2. The key distinction: AI-generated code that builds software is testable: it either works or it doesn't. AI-generated code that processes data to inform decisions brings back all the data trust problems.
 
 ---
 
@@ -929,10 +929,10 @@ These are mechanical. AI does them well.
 </div>
 </div>
 
-Best AI use: ask **"what function would I use for this?"** — not "do it for me."
+Best AI use: ask **"what function would I use for this?"**, not "do it for me."
 
 Note:
-From Day 4. As a data practitioner, knowing whether data looks right is essential. Knowing how to write HTML is not. AI teaches tool mechanics; the instructor teaches which tools matter and why. Recognising that index.html is the homepage of your website is enough — you don't need to write it yourself.
+From Day 4. As a data practitioner, knowing whether data looks right is essential. Knowing how to write HTML is not. AI teaches tool mechanics; the instructor teaches which tools matter and why. Recognising that index.html is the homepage of your website is enough; you don't need to write it yourself.
 
 ---
 
@@ -984,10 +984,10 @@ Reference slide. Students can return to this when they need a quick reminder of 
 ## The prompt framework at a glance
 
 <cli-highlight-prompt>
-{objective}What you want to achieve.{/objective} {steps}What the AI should do, in what order.{/steps} {output}What the result should look like.{/output} {reasoning}Why — explain your approach.{/reasoning}
+{objective}What you want to achieve.{/objective} {steps}What the AI should do, in what order.{/steps} {output}What the result should look like.{/output} {reasoning}Why: explain your approach.{/reasoning}
 </cli-highlight-prompt>
 
-The fifth element — **human verification** — is how you will check the result. Design this before you start, not after.
+The fifth element, **human verification**, is how you will check the result. Design this before you start, not after.
 
 Note:
 Reference slide. The colour coding matches the cli-highlight-prompt component used throughout the course slides. Students can refer to this when structuring their own prompts.

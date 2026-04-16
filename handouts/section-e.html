@@ -694,7 +694,7 @@ One dataset is information. Two datasets combined tell a **story**. Enrichment i
 
 <cli-pipeline highlight="Verify, Clean, Analyse">Define, Find, Get, Verify, Clean, Analyse, Present</cli-pipeline>
 
-This is still part of the **Verify/Clean/Analyse** arc. You are not adding new pipeline steps — you are repeating the existing ones with richer data. Each new dataset you bring in needs its own Get, its own Verify, and its own Clean before you can combine it with what you already have.
+This is still part of the **Verify/Clean/Analyse** arc. You are not adding new pipeline steps; you are repeating the existing ones with richer data. Each new dataset you bring in needs its own Get, its own Verify, and its own Clean before you can combine it with what you already have.
 
 Note:
 Slide 85 from the outline. The enrichment exercise is the centrepiece of Lectures 3-4. Students combine flood data with health facility data to produce a risk analysis that neither dataset could support alone. This is where the pipeline starts to feel powerful.
@@ -708,7 +708,7 @@ Slide 85 from the outline. The enrichment exercise is the centrepiece of Lecture
 
 ## What makes datasets combinable
 
-Two datasets can be combined when they share a **common dimension** — something that links records across the two sources.
+Two datasets can be combined when they share a **common dimension**: something that links records across the two sources.
 
 Common dimensions include:
 
@@ -719,7 +719,7 @@ Common dimensions include:
 Without a shared dimension, there is no link between the datasets. You can display them side by side, but you cannot combine them analytically. Combining means: for each record in Dataset A, find the related records in Dataset B.
 
 Note:
-Slide 86. In the crash course, the shared dimension between FloodArchive and Overpass health facilities is geography — both have coordinates. The FloodArchive has flood event locations; Overpass has facility locations. The proximity calculation (within 1km) is the analytical link.
+Slide 86. In the crash course, the shared dimension between FloodArchive and Overpass health facilities is geography: both have coordinates. The FloodArchive has flood event locations; Overpass has facility locations. The proximity calculation (within 1km) is the analytical link.
 
 ---
 
@@ -732,7 +732,7 @@ This usually means **aggregating** the more granular dataset:
 - Daily flood events → count per year per region → now combinable with yearly population data
 - Point-level facility locations → count per district → now combinable with district-level statistics
 
-Aggregation always loses information. You are trading detail for compatibility. This is a conscious design choice — document it and explain why you made it.
+Aggregation always loses information. You are trading detail for compatibility. This is a conscious design choice. Document it and explain why you made it.
 
 The question is always: **what is the smallest unit I can meaningfully analyse?** That determines the granularity of the combined dataset.
 
@@ -742,13 +742,13 @@ Slide 87. Students encountered this when trying to combine flood events (specifi
 ---
 
 <!-- .slide: class="section-slide" data-background-color="#091A31" -->
-# 🔧 How to Do It
+# 🔧 How Do We Do It
 
 ---
 
 ## Each new dataset repeats the pipeline
 
-Enrichment is not a single operation — it is a second pass through the pipeline for the new dataset:
+Enrichment is not a single operation. It is a second pass through the pipeline for the new dataset:
 
 <cli-pipeline highlight="Get, Verify, Clean">Define, Find, Get, Verify, Clean, Analyse, Present</cli-pipeline>
 
@@ -756,14 +756,14 @@ Enrichment is not a single operation — it is a second pass through the pipelin
 2. **Verify** — put them on the map, check counts and locations
 3. **Clean** — standardise fields, remove duplicates
 
-Only after this second pass can you combine the new data with the existing dataset. Skipping Verify on the second dataset is the most common mistake — you end up combining clean data with dirty data, and errors become invisible.
+Only after this second pass can you combine the new data with the existing dataset. Skipping Verify on the second dataset is the most common mistake: you end up combining clean data with dirty data, and errors become invisible.
 
 Note:
 This makes the pipeline traversal explicit. In the crash course, students who skipped verification on the Overpass data discovered problems later: duplicate entries, facilities outside the country boundary, and entries with no coordinates. Each dataset deserves its own pipeline pass.
 
 ---
 
-## The enrichment exercise
+## Six steps determine which facilities are in flood zones
 
 **Case study:** which health facilities are in flood risk zones?
 
@@ -793,10 +793,10 @@ Slide 88. This is the full exercise sequence from Lectures 3-4. Steps 1-2 use th
 {objective}Read the health facilities GeoJSON and the flood events CSV. For each facility, calculate distance to nearest flood event. Mark facilities within 1km as "at-risk."{/objective} {steps}1. Load both files. 2. For each facility, find nearest flood event using Haversine. 3. Add "risk_status" property ("at-risk" or "safe"). 4. Save two GeoJSON files: at-risk and safe.{/steps} {output}Two GeoJSON files with all original properties plus risk_status and distance_to_nearest_flood.{/output} {reasoning}Two files lets us style them differently on the map. Haversine accounts for Earth's curvature. 1km is a reasonable proximity threshold for flood impact.{/reasoning}
 </cli-highlight-prompt>
 
-All five prompt elements: objective, steps, output shape, reasoning. The fifth — human verification — is visual: put the results on the map and check.
+All five prompt elements: objective, steps, output shape, reasoning. The fifth, human verification, is visual: put the results on the map and check.
 
 Note:
-Slide 89. This is the most complex prompt in the crash course. All four colour-coded elements are present. The fifth element — human verification — is the next step: adding the results to the map and visually checking whether the at-risk facilities are actually near flood events. Students should notice how the reasoning element explains design choices (why 1km, why separate files, why Haversine).
+Slide 89. This is the most complex prompt in the crash course. All four colour-coded elements are present. The fifth element, human verification, is the next step: adding the results to the map and visually checking whether the at-risk facilities are actually near flood events. Students should notice how the reasoning element explains design choices (why 1km, why separate files, why Haversine).
 
 ---
 
@@ -809,7 +809,7 @@ Slide 89. This is the most complex prompt in the crash course. All four colour-c
 After this step, you have a map that is both a **verification tool** and a **presentation tool**.
 
 Note:
-Slide 90. The dual-purpose map is a key insight: the same artifact that verifies your analysis also demonstrates it to the funder. If facilities marked "at-risk" appear in the middle of the ocean, something went wrong in step 5 — the map catches it immediately.
+Slide 90. The dual-purpose map is a key insight: the same artifact that verifies your analysis also demonstrates it to the funder. If facilities marked "at-risk" appear in the middle of the ocean, something went wrong in step 5, and the map catches it immediately.
 
 ---
 
@@ -829,7 +829,7 @@ For geospatial data, the fastest check is **visual**. If data looks wrong on the
 
 You do not need to read the data file to spot these problems. The map shows them immediately. This is why every Get step is followed by a Verify step that puts data on a map.
 
-Visual verification does not replace checking the data — but it catches the most common errors in seconds. When the map looks right, then you dig into the numbers.
+Visual verification does not replace checking the data, but it catches the most common errors in seconds. When the map looks right, then you dig into the numbers.
 
 Note:
 Slide 91. This principle appeared first in Section C (build a simple Leaflet map as verification). Here it is reinforced with concrete failure modes students encountered: 0,0 coordinates placing facilities off the coast of Africa, a country filter that kept the wrong country, distance calculations that used degrees instead of kilometres.
@@ -840,16 +840,16 @@ Slide 91. This principle appeared first in Section C (build a simple Leaflet map
 
 The enrichment exercise IS the proposal demonstration:
 
-**Case study:** Indonesia flood monitoring — remote communities, scattered health facilities, no systematic risk mapping.
+**Case study:** Indonesia flood monitoring: remote communities, scattered health facilities, no systematic risk mapping.
 
 **Angle:** Prevention + staff safety + emergency response. If field staff know which facilities are at risk *before* a flood, they can prepare.
 
-**Proposal:** A facility risk dashboard for field staff — overlaying flood history, facility locations, and population data. The organisation gains a planning tool it currently lacks.
+**Proposal:** A facility risk dashboard for field staff, overlaying flood history, facility locations, and population data. The organisation gains a planning tool it currently lacks.
 
 The map you just built is the **"show don't tell"** artifact from Section A. Instead of describing what you would do, you demonstrate it. The funder sees evidence, not promises.
 
 Note:
-Slide 92. This connects the technical exercise back to the strategic framing from Sections A and B. The case study → angle → proposal sequence (Section B, slide 30) is now instantiated with real data. The enrichment exercise is not a stand-alone technical exercise — it IS the proposal's proof of concept.
+Slide 92. This connects the technical exercise back to the strategic framing from Sections A and B. The case study → angle → proposal sequence (Section B, slide 30) is now instantiated with real data. The enrichment exercise is not a stand-alone technical exercise; it IS the proposal's proof of concept.
 
 ---
 
@@ -872,7 +872,7 @@ This does not mean one is wrong. It means they have:
 Both can be true. Your job is to **document the discrepancy** and explain your choice. "I used FloodArchive because it has coordinates, which EM-DAT does not" is a valid, transparent reason.
 
 Note:
-Slide 93. This question came from a student who found different flood counts in two sources. The answer reinforced the data cleaning principles from Section D: document every decision. In a proposal, acknowledging a limitation is stronger than ignoring it — the funder trusts teams that understand their data's constraints.
+Slide 93. This question came from a student who found different flood counts in two sources. The answer reinforced the data cleaning principles from Section D: document every decision. In a proposal, acknowledging a limitation is stronger than ignoring it. The funder trusts teams that understand their data's constraints.
 
 ---
 
@@ -890,7 +890,7 @@ Adding a population layer turns a binary risk map (at-risk / safe) into a **prio
 The prompt pattern is the same: Get the data → Verify on the map → Clean/Analyse to combine → Present with the existing layers.
 
 Note:
-Slide 94. This was a genuine student contribution during Lecture 4. It demonstrates two things: the pipeline pattern (same steps, new data) and the value of peer input. The suggestion was not implemented during the crash course due to time constraints, but it is a natural extension of the exercise. GeoTIFF population grids require raster processing, which is more complex than vector data — a good exercise for advanced students.
+Slide 94. This was a genuine student contribution during Lecture 4. It demonstrates two things: the pipeline pattern (same steps, new data) and the value of peer input. The suggestion was not implemented during the crash course due to time constraints, but it is a natural extension of the exercise. GeoTIFF population grids require raster processing, which is more complex than vector data, making it a good exercise for advanced students.
 
 ---
 

@@ -755,7 +755,7 @@ An API is a way to ask a database for specific data. Instead of downloading a hu
 https://restcountries.com/v3.1/name/kenya
 ```
 
-Returns: population, area, region, capital, coordinates, borders — for Kenya only.
+Returns: population, area, region, capital, coordinates, borders, for Kenya only.
 
 APIs are useful because your AI tool can **write the request for you** and **process the response**. Without knowing an API exists, you might instruct AI to scrape a website page by page, when the API could give you exactly the data you need.
 
@@ -816,7 +816,7 @@ From Day 2. Students tried both versions in class and compared results. The vagu
 
 ---
 
-## Data privacy
+## Separate data from interface to protect privacy
 
 When working with sensitive data:
 
@@ -869,7 +869,7 @@ This is the Find step. The output is a list of sources, not data. You make the d
 {objective}Write a script that reads FloodArchive_clustered.csv and keeps only the rows where Country is [your country].{/objective} {output}Save the result as a new CSV file.{/output} {reasoning}I'm a beginner, please explain what you're doing in simple terms.{/reasoning}
 </cli-highlight-prompt>
 
-**Read the script before running it.** A script is a reproducible artifact — if someone asks how you got this data, you show them the script.
+**Read the script before running it.** A script is a reproducible artifact. If someone asks how you got this data, you show them the script.
 
 Note:
 This is the Get step. The script IS the methodology. Without it, you have data with no explanation of where it came from.
@@ -882,7 +882,7 @@ This is the Get step. The script IS the methodology. Without it, you have data w
 {objective}Create a simple Leaflet map that can be published on GitHub Pages.{/objective} {output}Display the flood events from [your CSV] as circles. Add popups with date, cause, and severity. Center the map on [your country].{/output} {steps}Publish it on GitHub Pages from the main branch.{/steps} {reasoning}I'm a beginner, please explain what you're doing in simple terms.{/reasoning}
 </cli-highlight-prompt>
 
-Always say **"simple Leaflet map"** — without "simple," the agent will build something complex and waste tokens.
+Always say **"simple Leaflet map"**. Without "simple," the agent will build something complex and waste tokens.
 
 Note:
 This is the Verify step: put the data on a map and check visually. Does it look right? Are the points in the right country? Is the count reasonable?
@@ -895,7 +895,7 @@ This is the Verify step: put the data on a map and check visually. Does it look 
 {objective}Query the Overpass API for all hospitals and clinics in [your country].{/objective} {output}Save the result as a GeoJSON file.{/output} {reasoning}I'm a beginner, please explain what you're doing in simple terms.{/reasoning}
 </cli-highlight-prompt>
 
-**The Overpass API** queries OpenStreetMap data. No registration, no API key. Queries can take 30+ seconds for large countries — that is normal. Rate limits are generous: under 10,000 queries/day is safe.
+**The Overpass API** queries OpenStreetMap data. No registration, no API key. Queries can take 30+ seconds for large countries; that is normal. Rate limits are generous: under 10,000 queries/day is safe.
 
 Note:
 From Day 3. Overpass is the query engine for OpenStreetMap. The query syntax is complex but the AI writes it. Kenya has ~1,800 health facilities in OSM. A country with only 20 results means poor coverage.
@@ -939,7 +939,7 @@ If you ask AI to "find and map data" in one prompt, it does three things at once
 
 If the map shows wrong data, you cannot tell which step failed. **Separating steps = separating failure modes.**
 
-This is why we always do Find, then Get, then Verify — each as its own prompt, with its own verifiable output.
+This is why we always do Find, then Get, then Verify, each as its own prompt, with its own verifiable output.
 
 Note:
 Callback to Foundations slide 6. The election results example from Lecture 3: without separating Find and Get, the AI might hit anti-bot protection, silently fall back to an older dataset, and you would never know.
@@ -948,11 +948,11 @@ Callback to Foundations slide 6. The election results example from Lecture 3: wi
 
 ## More automation means more verification
 
-As your extraction power goes up, the burden on **Verify** increases. AI makes getting data frictionless — but it does not make verifying data easier.
+As your extraction power goes up, the burden on **Verify** increases. AI makes getting data frictionless, but it does not make verifying data easier.
 
 The pipeline keeps you honest: every step has a checkpoint where you inspect the result before proceeding.
 
-AI concentrates at Get and Clean — the heatmap from Lecture 2 shows where AI helps most. But Define, Verify, and Analyse remain human-dominated because they require judgment about meaning.
+AI concentrates at Get and Clean. The heatmap from Lecture 2 shows where AI helps most. But Define, Verify, and Analyse remain human-dominated because they require judgment about meaning.
 
 Note:
 From Lecture 2: the verification burden diagram. Students experienced this: when AI fetched 52 MEP records in Lecture 5, the automatic count looked right but manual spot-checking revealed "name not found" entries.
@@ -968,7 +968,7 @@ From Lecture 2: the verification burden diagram. Students experienced this: when
 
 - **Agent thinking too long?** Press **Escape** (may need multiple presses), then ask it why it is taking so long
 - **Agent builds something too complex?** Ask for a **"simple Leaflet map"** or **"simple HTML page"**
-- **Map not updating?** Hard refresh: **Ctrl+Shift+R** (Windows) or **Cmd+Shift+R** (Mac). This clears the browser cache — it is safe.
+- **Map not updating?** Hard refresh: **Ctrl+Shift+R** (Windows) or **Cmd+Shift+R** (Mac). This clears the browser cache. It is safe.
 - **Agent fails to download a file?** Download it yourself and drag-and-drop into the Codespace
 - **Agent publishes to wrong branch?** Tell it "publish on the main branch, not gh-pages" or change Settings → Pages to use the gh-pages branch
 
@@ -977,12 +977,12 @@ These were the most frequent issues during the crash course. The "simple" keywor
 
 ---
 
-## Session management
+## Resume sessions and separate tasks by folder
 
 - `gemini --resume` reopens your latest session
 - Different folders = different conversation histories
 - Use separate terminal tabs for separate tasks
-- Your Codespace preserves files but restarts apps — Gemini CLI needs to be relaunched, but `--resume` recovers the session
+- Your Codespace preserves files but restarts apps. Gemini CLI needs to be relaunched, but `--resume` recovers the session
 
 Note:
 From Days 2-4. Codespaces shut off automatically to save resources. Files persist, but running processes restart. Gemini sessions are saved in the folder, so resume always works.
