@@ -1,362 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Flood Impact Analysis | Project Home</title>
-    <style>
-        :root {
-            --bg-primary: #1a1a2e;
-            --bg-secondary: #252542;
-            --bg-tertiary: #2d2d4a;
-            --text-primary: #f0f0f0;
-            --text-secondary: #a0a0b0;
-            --text-muted: #6a6a7a;
-            --accent: #e6b84a;
-            --accent-hover: #d4a83a;
-            --border: #3a3a5a;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.5;
-        }
-
-        /* Navigation */
-        nav {
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-brand {
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: var(--accent);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent);
-        }
-
-        /* Header */
-        header {
-            max-width: 1000px;
-            margin: 4rem auto 2rem;
-            padding: 0 2rem;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        header p {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Main Content */
-        main {
-            max-width: 1000px;
-            margin: 0 auto 4rem;
-            padding: 0 2rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 3rem 0 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--accent);
-        }
-
-        /* App Cards */
-        .app-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        }
-
-        .card h3 {
-            margin-bottom: 0.75rem;
-            font-size: 1.25rem;
-            color: var(--text-primary);
-        }
-
-        .card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-            flex-grow: 1;
-        }
-
-        .btn {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--bg-primary);
-            padding: 0.625rem 1.25rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            text-align: center;
-            transition: background 0.2s;
-        }
-
-        .btn:hover {
-            background: var(--accent-hover);
-        }
-
-        /* Dataset Table/Cards */
-        .dataset-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        .dataset-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem 1.5rem;
-            display: grid;
-            grid-template-columns: 2fr 1.5fr 1fr 1fr;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .dataset-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .dataset-meta {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            background: var(--bg-tertiary);
-            color: var(--accent);
-            border: 1px solid var(--border);
-        }
-
-        /* Preview Section */
-        .preview-container {
-            margin-top: 1rem;
-            background: #0d0d1a;
-            border-radius: 8px;
-            overflow-x: auto;
-            border: 1px solid var(--border);
-        }
-
-        .preview-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: #f0f0f0;
-        }
-
-        .preview-table th {
-            background: #252542;
-            text-align: left;
-            padding: 0.5rem;
-            border-bottom: 1px solid #3a3a5a;
-            color: #e6b84a;
-            white-space: nowrap;
-        }
-
-        .preview-table td {
-            padding: 0.5rem;
-            border-bottom: 1px solid #2d2d4a;
-            white-space: nowrap;
-        }
-
-        .preview-title {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-
-        @media (max-width: 768px) {
-            .dataset-card {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-            .metadata-label {
-                display: inline;
-                margin-right: 0.5rem;
-            }
-            .nav-links {
-                display: none;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crash Course — ICT for Civic Data 2026</title>
+  <link rel="stylesheet" href="site/css/style.css">
 </head>
 <body>
-    <nav>
-        <a href="#" class="nav-brand">FloodInsight</a>
-        <div class="nav-links">
-            <a href="senegal/index.html">Map</a>
-            <a href="dashboard/index.html">Charts</a>
-            <a href="visualizer/index.html">Visualizer</a>
-        </div>
-    </nav>
 
-    <header>
-        <h1>Global Flood Impact Analysis</h1>
-        <p>A comprehensive study of flood events, severity, and their impact on critical infrastructure in Senegal and across the globe.</p>
-    </header>
+<header class="site-header">
+  <a href="index.html" class="logo">ICT for Civic Data <span>— Crash Course 2026</span></a>
+  <div class="header-right">
+    <a href="index.html" class="active">Home</a>
+    <a href="resources/RFP.md">RFP</a>
+    <a href="https://docs.google.com/spreadsheets/d/1gaDGvw5z0NnpKR1iE0MfVtUECOjfd5qgtWr_x0cScsM/edit?gid=1816209456#gid=1816209456" target="_blank">Spreadsheet</a>
+  </div>
+</header>
 
-    <main>
-        <div class="section-title">Analysis Tools</div>
-        <div class="app-grid">
-            <div class="card">
-                <h3>Interactive Map</h3>
-                <p>Explore flood zones in Senegal and identify health facilities located in at-risk areas using spatial analysis.</p>
-                <a href="senegal/index.html" class="btn">View Map</a>
-            </div>
-            <div class="card">
-                <h3>Data Dashboard</h3>
-                <p>Statistical overview of global flood trends, mortality rates, and displacement figures over time.</p>
-                <a href="dashboard/index.html" class="btn">View Charts</a>
-            </div>
-            <div class="card">
-                <h3>GeoData Visualizer</h3>
-                <p>A versatile tool to upload, parse, and visualize your own geographic CSV datasets instantly on an interactive map.</p>
-                <a href="visualizer/index.html" class="btn">Open App</a>
-            </div>
-        </div>
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Course Materials</div>
+    <a href="site/course-day1.html" class="sidebar-link">
+      <span class="icon">1</span> Project Definition
+    </a>
+    <a href="site/course-day2.html" class="sidebar-link">
+      <span class="icon">2</span> From Data to Map
+    </a>
+    <a href="site/course-day3.html" class="sidebar-link">
+      <span class="icon">3</span> Enrichment &amp; Cleaning
+    </a>
+    <a href="site/course-day4.html" class="sidebar-link">
+      <span class="icon">4</span> Analysis &amp; Storytelling
+    </a>
+  </div>
 
-        <div class="section-title">Datasets & Metadata</div>
-        
-        <!-- Global Archive -->
-        <div class="dataset-card">
-            <div class="dataset-name">Global Active Flood Archive</div>
-            <div class="dataset-meta">Dartmouth Flood Observatory</div>
-            <div><span class="badge">CSV / XLSX</span></div>
-            <div class="dataset-meta">Apr 2026</div>
-        </div>
-        <div class="preview-title">Data Preview (First 5 rows)</div>
-        <div class="preview-container">
-            <table class="preview-table">
-                <thead>
-                    <tr><th>ID</th><th>Country</th><th>long</th><th>lat</th><th>Began</th><th>Dead</th><th>MainCause</th><th>Severity</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>1</td><td>Algeria</td><td>5.23026</td><td>35.8142</td><td>1985-01-01</td><td>26</td><td>Heavy rain</td><td>1.0</td></tr>
-                    <tr><td>2</td><td>Brazil</td><td>-45.3489</td><td>-18.7111</td><td>1985-01-15</td><td>229</td><td>Heavy rain</td><td>2.0</td></tr>
-                    <tr><td>3</td><td>Phillipines</td><td>122.974</td><td>10.0207</td><td>1985-01-20</td><td>43</td><td>Torrential rain</td><td>1.0</td></tr>
-                    <tr><td>4</td><td>Indonesia</td><td>124.606</td><td>1.01489</td><td>1985-02-04</td><td>21</td><td>Torrential rain</td><td>1.0</td></tr>
-                    <tr><td>5</td><td>Mozambique</td><td>32.3491</td><td>-25.8693</td><td>1985-02-09</td><td>19</td><td>Heavy rain</td><td>2.0</td></tr>
-                </tbody>
-            </table>
-        </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Self-Paced Review</div>
+    <a href="site/foundations.html" class="sidebar-link">
+      <span class="icon">0</span> Foundations
+    </a>
+    <a href="site/section-a.html" class="sidebar-link">
+      <span class="icon">A</span> Reading an RFP
+    </a>
+    <a href="site/section-b.html" class="sidebar-link">
+      <span class="icon">B</span> Example to Proposal
+    </a>
+    <a href="site/section-c.html" class="sidebar-link">
+      <span class="icon">C</span> Finding &amp; Getting Data
+    </a>
+    <a href="site/section-d.html" class="sidebar-link">
+      <span class="icon">D</span> Verification &amp; Cleaning
+    </a>
+    <a href="site/section-e.html" class="sidebar-link">
+      <span class="icon">E</span> Enrichment
+    </a>
+    <a href="site/section-f.html" class="sidebar-link">
+      <span class="icon">F</span> Visualisation
+    </a>
+    <a href="site/section-g.html" class="sidebar-link">
+      <span class="icon">G</span> Storytelling
+    </a>
+  </div>
 
-        <!-- Senegal Floods -->
-        <div class="dataset-card" style="margin-top: 2rem;">
-            <div class="dataset-name">Senegal Flood Events</div>
-            <div class="dataset-meta">Filtered Archive Data</div>
-            <div><span class="badge">GeoJSON / CSV</span></div>
-            <div class="dataset-meta">Apr 2026</div>
-        </div>
-        <div class="preview-title">Data Preview (First 5 rows)</div>
-        <div class="preview-container">
-            <table class="preview-table">
-                <thead>
-                    <tr><th>ID</th><th>Country</th><th>long</th><th>lat</th><th>Began</th><th>Dead</th><th>Displaced</th><th>MainCause</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>1008</td><td>Senegal</td><td>-15.0548</td><td>15.8268</td><td>1995-09-24</td><td>0</td><td>0</td><td>Heavy rain</td></tr>
-                    <tr><td>1866</td><td>Senegal</td><td>-14.6405</td><td>15.5553</td><td>2002-01-09</td><td>28</td><td>80000</td><td>Heavy rain</td></tr>
-                    <tr><td>2316</td><td>Senegal</td><td>-12.9402</td><td>15.9392</td><td>2003-08-09</td><td>10</td><td>5300</td><td>Heavy rain</td></tr>
-                    <tr><td>2729</td><td>Senegal</td><td>-17.3737</td><td>14.7558</td><td>2005-08-20</td><td>0</td><td>5600</td><td>Heavy rain</td></tr>
-                    <tr><td>3180</td><td>Senegal</td><td>-13.9678</td><td>15.4745</td><td>2007-08-31</td><td>1</td><td>0</td><td>Heavy rain</td></tr>
-                </tbody>
-            </table>
-        </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Reference</div>
+    <a href="demos/senegal/index.html" class="sidebar-link">
+      <span class="icon">↗</span> Demo: Senegal Map
+      <span class="badge">live</span>
+    </a>
+    <a href="demos/dashboard/index.html" class="sidebar-link">
+      <span class="icon">↗</span> Demo: Dashboard
+      <span class="badge">live</span>
+    </a>
+    <a href="resources/RFP.md" class="sidebar-link">
+      <span class="icon">📄</span> RFP
+    </a>
+    <a href="resources/disaster-data-sources.md" class="sidebar-link">
+      <span class="icon">📄</span> Data Sources
+    </a>
+    <a href="site/exam.html" class="sidebar-link">
+      <span class="icon">📝</span> Exam
+    </a>
+  </div>
+</aside>
 
-        <!-- Health Sites -->
-        <div class="dataset-card" style="margin-top: 2rem;">
-            <div class="dataset-name">Senegal Health Sites</div>
-            <div class="dataset-meta">healthsites.io</div>
-            <div><span class="badge">JSON</span></div>
-            <div class="dataset-meta">Apr 2026</div>
-        </div>
-        <div class="preview-title">Data Preview (JSON snippet)</div>
-        <div class="preview-container">
-            <pre style="color: #f0f0f0; padding: 1rem; font-size: 0.75rem;">{
-  "type": "Feature",
-  "geometry": { "type": "Point", "coordinates": [-17.47, 14.70] },
-  "properties": {
-    "name": "Pharmacie Stella",
-    "healthcare": "pharmacy",
-    "amenity": "pharmacy"
-  }
-}, ...</pre>
-        </div>
-    </main>
+<main class="main">
+  <div class="landing">
+    <h1>ICT for Civic Data<br>Crash Course 2026</h1>
+    <p class="subtitle">Using data and AI to communicate ideas — from reading an RFP to building a data-backed proposal with maps, charts, and a published data portal.</p>
+
+    <h2>Course Materials</h2>
+    <p style="color: var(--gray-500); margin-bottom: 24px; font-size: 15px;">
+      Day-by-day slides as presented in class. Use these to review what was covered each day.
+    </p>
+    <div class="track-grid">
+      <a href="site/course-day1.html" class="track-card course">
+        <h3>Day 1: Project Definition</h3>
+        <p>RFP analysis, choosing your angle, team formation, first map on GitHub Pages.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a href="site/course-day2.html" class="track-card course">
+        <h3>Day 2: From Data to Map</h3>
+        <p>FloodArchive exercise, precise prompting, data formats and sources, individual data work.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a href="site/course-day3.html" class="track-card course">
+        <h3>Day 3: Enrichment &amp; Cleaning</h3>
+        <p>Health facility enrichment, prompt framework, Google Sheets cleaning, OpenRefine.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a href="site/course-day4.html" class="track-card course">
+        <h3>Day 4: Analysis &amp; Storytelling</h3>
+        <p>Categorisation, Chart.js dashboards, landing pages, v0, skills, peer review.</p>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+
+    <h2>Self-Paced Review</h2>
+    <p style="color: var(--gray-500); margin-bottom: 24px; font-size: 15px;">
+      Thematic handout decks covering the full course content, organised for independent study. Each section follows a consistent structure: what are we trying to do, what we need to know, how to do it, why we did it this way, and Q&amp;A.
+    </p>
+    <div class="track-grid">
+      <a href="site/foundations.html" class="track-card review">
+        <h3>Part 0: Foundations</h3>
+        <p>The data pipeline, prompt framework, core principles that underpin everything.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a href="site/section-a.html" class="track-card review">
+        <h3>A: Reading an RFP</h3>
+        <p>Understanding the funder, the 12 analysis questions, show don't tell.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a href="site/section-b.html" class="track-card review">
+        <h3>B: From Example to Proposal</h3>
+        <p>Case study to angle, tangible deliverables, project roles.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a href="site/section-c.html" class="track-card review">
+        <h3>C: Finding &amp; Getting Data</h3>
+        <p>Data sources, APIs, prompts for discovery and extraction.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a href="site/section-d.html" class="track-card review">
+        <h3>D: Verification &amp; Cleaning</h3>
+        <p>Google Sheets techniques, OpenRefine, formulas, cleaning principles.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a href="site/section-e.html" class="track-card review">
+        <h3>E: Enrichment &amp; Combination</h3>
+        <p>Combining datasets, granularity, the health facilities exercise.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a href="site/section-f.html" class="track-card review">
+        <h3>F: Visualisation &amp; Presentation</h3>
+        <p>Chart types, Chart.js, landing pages, v0, skills, data privacy.</p>
+        <span class="arrow">→</span>
+      </a>
+      <a href="site/section-g.html" class="track-card review">
+        <h3>G: Storytelling &amp; Peer Review</h3>
+        <p>From tools to storytelling, the peer review framework.</p>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="site/js/site.js"></script>
 </body>
 </html>
