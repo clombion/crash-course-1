@@ -24,6 +24,7 @@ const SIDEBAR_DATA = {
         { href: 'course-day2.html', icon: 'fa-solid fa-2 fa-xs', label: 'From Data to Map' },
         { href: 'course-day3.html', icon: 'fa-solid fa-3 fa-xs', label: 'Enrichment & Cleaning' },
         { href: 'course-day4.html', icon: 'fa-solid fa-4 fa-xs', label: 'Analysis & Storytelling' },
+        { href: 'course-day5.html', icon: 'fa-solid fa-5 fa-xs', label: 'Refining Your Story' },
       ]
     },
     {
